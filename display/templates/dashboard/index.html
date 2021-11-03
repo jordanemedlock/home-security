@@ -1,9 +1,72 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
+
 {% block header %}
   <h1>{% block title %}Dashboard{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
-    Mothafuckin dashboard!
+    <div class="row">
+        {% for panel in panels %}
+            {% include 'dashboard/panels/' + panel.panel_type + '.html' %}
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col-4 card">
+            <div class="card-body">
+                <h5 class="card-title">Dashboard Actions</h5>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#add-panel-modal">Add Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="add-panel-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Panel</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-panel-form" action="{{ url_for('dashboard.add_panel') }}" method="post">
+                        <div class="mb-3">
+                            <label for="panel-type" class="form-label">Panel Type</label>
+                            <select class="form-control" name="panel-type" id="panel-type">
+                                <option value="">Select One...</option>
+                                {% for panel in panel_info %}
+                                    <option value="{{ panel.type }}">{{ panel['display_name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% for panel in panel_info %}
+                            <div class="panel-form" id="panel-form-{{ panel.type }}">
+                                {% for setting in panel['settings'] %}
+                                    <div class="mb-3">
+                                        <label for="{{ setting['name'] }}" class="form-label">{{ setting['display_name'] }}</label>
+                                        {% if setting['type'] == 'select' %}
+                                            <select id="{{ setting['name'] }}" class="form-control">
+                                                <option value="">Select One...</option>
+                                                {% for name, value in setting['options'] %}
+                                                    <option value="{{ value }}">{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        {% else %}
+                                            <input class="form-control" type="{{ setting['type'] }}" name="{{ setting['name'] }}" value="{{ setting['default'] or ''}}"/>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="add-panel-form">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
