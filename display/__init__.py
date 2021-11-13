@@ -13,6 +13,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY='dev'
     )
+    api = Api(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -31,6 +32,8 @@ def create_app(test_config=None):
     from .db import SessionLocal, engine
     models.Base.metadata.create_all(bind=engine)
 
+    from .auth import Auth
+    api.add_resource(Auth, '/auth')
 
     # from . import auth
     # app.register_blueprint(auth.bp)
