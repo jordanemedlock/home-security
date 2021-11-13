@@ -1,12 +1,15 @@
 import os
 
-from flask import Flask, _app_ctx_stack
+from flask import Flask, _app_ctx_stack, send_from_directory
+from flask_restful import Api, Resource, reqparse
+from flask_cors import CORS #comment this on deployment
 from sqlalchemy.orm import scoped_session
 
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_relative_config=True)
+    app = Flask(__name__, instance_relative_config=True, static_url_path='', static_folder='frontend/build')
+    CORS(app) # comment this on deployment
     app.config.from_mapping(
         SECRET_KEY='dev'
     )
@@ -29,17 +32,16 @@ def create_app(test_config=None):
     models.Base.metadata.create_all(bind=engine)
 
 
-    from . import auth
-    app.register_blueprint(auth.bp)
+    # from . import auth
+    # app.register_blueprint(auth.bp)
 
-    from . import dashboard
-    app.register_blueprint(dashboard.bp)
-    app.add_url_rule('/', endpoint='index')
+    # from . import dashboard
+    # app.register_blueprint(dashboard.bp)
+    # app.add_url_rule('/', endpoint='index')
 
-    # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    @app.route("/", defaults={'path':''})
+    def serve(path):
+        return send_from_directory(app.static_folder,'index.html')
 
     app.session = scoped_session(SessionLocal)
 
