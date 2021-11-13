@@ -5,10 +5,10 @@ from flask import (
 )
 from flask_restful import Resource, reqparse
 from werkzeug.security import check_password_hash, generate_password_hash
-
+from uuid import uuid4
 from . import models
 
-class Auth(Resource):
+class Login(Resource):
     def post(self):
         json_data = request.get_json(force=True)
         username = json_data['username']
@@ -25,13 +25,39 @@ class Auth(Resource):
         if error is None:
             session.clear()
             session['user_id'] = user.id
+            session['token'] = uuid4().hex
             return {
-                'token': 'test123',
+                'token': session['token'],
                 'username': user.username
             }
         else:
             return {
                 'error': error
+            }
+
+class Register(Resource):
+    def post(self):
+        json_data = request.get_json(force=True)
+        username = json_data['username']
+        password = json_data['password']
+
+        error = None
+
+        if not username:
+            error = 'Username is required.'
+        elif not password:
+            error = 'Password is required.'
+
+        if error is None:
+            # try:
+            user = models.User(username=username, password=generate_password_hash(password))
+            current_app.session.add(user)
+            current_app.session.commit()
+            session['user_id'] = user.id
+            session['token'] = uuid4().hex
+            return {
+                'token': session['token'],
+                'username': user.username
             }
 
 

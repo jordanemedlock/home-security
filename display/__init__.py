@@ -32,8 +32,9 @@ def create_app(test_config=None):
     from .db import SessionLocal, engine
     models.Base.metadata.create_all(bind=engine)
 
-    from .auth import Auth
-    api.add_resource(Auth, '/auth')
+    from .auth import Login, Register
+    api.add_resource(Login, '/api/login')
+    api.add_resource(Register, '/api/register')
 
     # from . import auth
     # app.register_blueprint(auth.bp)
@@ -42,7 +43,7 @@ def create_app(test_config=None):
     # app.register_blueprint(dashboard.bp)
     # app.add_url_rule('/', endpoint='index')
 
-    @app.route("/", defaults={'path':''})
+    @app.route("/<path>", defaults={'path':''})
     def serve(path):
         return send_from_directory(app.static_folder,'index.html')
 

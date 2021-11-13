@@ -5,7 +5,7 @@ import './index.css';
 import Dashboard from './components/Dashboard/Dashboard';
 import Preferences from './components/Preferences/Preferences';
 import reportWebVitals from './reportWebVitals';
-import App from './components/App'
+import App from './components/App/App'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(

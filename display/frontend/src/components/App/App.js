@@ -4,13 +4,21 @@ import Dashboard from '../Dashboard/Dashboard';
 import Preferences from '../Preferences/Preferences';
 import Login from '../Login/Login';
 import useToken from './useToken';
+import Register from '../Register/Register';
 
 
 
 function App() {
     const [token, setToken] = useToken();
     if (!token) {
-        return <Login setToken={setToken} />
+        return (
+            <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={<Login setToken={setToken}/>}/>
+                <Route path="/register" element={<Register setToken={setToken}/>}/>
+            </Routes>
+            </BrowserRouter>
+        )
     }
 
     return (

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import './Login.css';
 
 async function loginUser(credentials) {
-    return fetch('http://localhost:5000/auth', {
+    return fetch('http://localhost:5000/api/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -18,11 +18,13 @@ export default function Login({ setToken }) {
 
     const handleSubmit = async e => {
         e.preventDefault();
-        const {token} = await loginUser({
+        const data = await loginUser({
             username,
             password
-        })
-        setToken(token);
+        });
+        if (!data.error && data.token) {
+            setToken(data);
+        }
     }
     return(
         <div className="login-wrapper">
