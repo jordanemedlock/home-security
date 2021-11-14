@@ -39,7 +39,8 @@ def create_app(test_config=None):
     # from . import auth
     # app.register_blueprint(auth.bp)
 
-    # from . import dashboard
+    from .dashboard import Panel
+    api.add_resource(Panel, '/api/panel')
     # app.register_blueprint(dashboard.bp)
     # app.add_url_rule('/', endpoint='index')
 
